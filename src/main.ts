@@ -19,18 +19,17 @@ async function run(): Promise<void> {
       },
       redirect: 'follow'
     }
-    console.log({owner,repo,pull_number})
+    core.info(`Triggered for: ${owner,repo,pull_number}`);
     fetch(
       `https://api.github.com/repos/${owner}/${repo}/pulls/${pull_number}/reviews?per_page=100`,
       requestOptions as any
     )
       .then(response => {
-        console.log({response})
+        core.info(`API response: ${response}`);
         return response.json()
       })
       .then(res => {
-        core.debug(`Reviewers response: ${res}`);
-        console.log({res})
+        core.info(`Reviewers response: ${res}`);
         const reviews = res
           .map((d: {user: {login: any}; state: any}) => {
             const login = d?.user?.login
@@ -42,16 +41,16 @@ async function run(): Promise<void> {
             return
           })
           .filter(Boolean)
-          console.log({reviews})
+          core.info(`Reviews: ${reviews}`);
         if (reviews.length < count)
           core.setFailed(`Mandatory Approval Required from ${usernames}`)
       })
       .catch(error => {
-        console.log({error})
+        core.info(`Catch error 1: ${error}`);
         core.setFailed(error.message)
       })
   } catch (error) {
-    console.log({error})
+    core.info(`Catch error 2: ${error}`);
     if (error instanceof Error) core.setFailed(error.message)
   }
 }
