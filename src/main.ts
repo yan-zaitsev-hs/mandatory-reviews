@@ -5,6 +5,7 @@ import fetch from 'node-fetch'
 
 async function run(): Promise<void> {
   try {
+    core.debug('Hello from main.ts');
     const usernames: string = core.getInput('usernames')
     const group = usernames.split(',')
     const count = Number(core.getInput('count'))
